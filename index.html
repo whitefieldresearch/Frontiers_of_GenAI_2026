@@ -36,12 +36,6 @@
   textarea{resize:vertical;line-height:1.8}
   .word-count{font-size:12px;color:#94a3b8;text-align:right;margin-top:4px}
 
-  /* PHOTO */
-  .photo-wrap{display:flex;gap:20px;align-items:center}
-  .photo-preview{width:90px;height:90px;border-radius:12px;object-fit:cover;border:3px solid var(--mb);display:none}
-  .photo-placeholder{width:90px;height:90px;border-radius:12px;background:#f0f4f8;border:2px dashed #CBD5E1;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
-  .photo-hint{font-size:12px;color:#94a3b8;margin-top:8px}
-
   /* COPYRIGHT */
   .copy-box{background:#f8fafc;border-radius:10px;padding:18px;margin-bottom:20px;font-size:13px;color:#334155;line-height:1.9;border:1px solid #e2e8f0;max-height:220px;overflow-y:auto;white-space:pre-line}
   .agree-label{display:flex;gap:12px;align-items:flex-start;cursor:pointer;padding:16px;border-radius:10px;border:2px solid #CBD5E1;background:#fafafa;margin-bottom:16px;transition:all .2s}
@@ -205,27 +199,6 @@
         </div>
       </div>
 
-      <!-- PHOTO -->
-      <div class="card">
-        <div class="section-title">📷 &nbsp;Photograph <span style="color:var(--ac);font-size:14px">*</span></div>
-        <div style="background:#fff8e1;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#7b5800;border-left:3px solid #f9a825;font-weight:600">
-          📘 Your photograph will be printed alongside your bio in the <em>About the Authors</em> section of the published book. Please upload a clear, professional photograph.
-        </div>
-        <div class="photo-wrap">
-          <div style="flex-shrink:0">
-            <div class="photo-placeholder" id="photo-placeholder">👤</div>
-            <img class="photo-preview" id="photo-preview" alt="Preview"/>
-          </div>
-          <div>
-            <label>Upload Photo <span class="req">*</span></label>
-            <input type="file" accept="image/*" id="photo-input" onchange="previewPhoto(this)" style="padding:6px 0;border:none;font-size:13px"/>
-            <div class="error" id="photo-error" style="display:none">Photo is required for book publication</div>
-            <div class="photo-hint">JPEG or PNG &nbsp;•&nbsp; Plain / white background preferred &nbsp;•&nbsp; Passport or professional size &nbsp;•&nbsp; Minimum 300 DPI</div>
-          </div>
-        </div>
-        <input type="hidden" name="photo_submitted" id="photo-submitted" value="No"/>
-      </div>
-
       <!-- COPYRIGHT -->
       <div class="card">
         <div class="section-title">⚖️ &nbsp;Copyright Transfer Agreement</div>
@@ -295,22 +268,6 @@ function updateWordCount(el) {
   document.getElementById("word-count").textContent = words;
 }
 
-// Photo preview
-function previewPhoto(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const preview = document.getElementById("photo-preview");
-    const placeholder = document.getElementById("photo-placeholder");
-    preview.src = e.target.result;
-    preview.style.display = "block";
-    placeholder.style.display = "none";
-    document.getElementById("photo-submitted").value = "Yes — " + file.name;
-  };
-  reader.readAsDataURL(file);
-}
-
 // Agree checkbox
 function toggleAgree() {
   const cb = document.getElementById("agree-check");
@@ -338,16 +295,6 @@ function validate() {
     if (!fn()) { el.classList.add("has-error"); ok = false; }
     else el.classList.remove("has-error");
   });
-  // Photo — mandatory for book publication
-  const photoInput = document.getElementById("photo-input");
-  const photoErr   = document.getElementById("photo-error");
-  if (!photoInput.files || photoInput.files.length === 0) {
-    photoErr.style.display = "block";
-    photoErr.scrollIntoView({behavior:"smooth", block:"center"});
-    ok = false;
-  } else {
-    photoErr.style.display = "none";
-  }
   return ok;
 }
 
