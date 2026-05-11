@@ -215,8 +215,8 @@
 Governing Law: Courts of Noida, Uttar Pradesh, India.</div>
 
         <div class="field" id="field-agreed">
-          <label class="agree-label" id="agree-label" onclick="toggleAgree()">
-            <input type="checkbox" name="copyright_agreed" id="agree-check" value="Yes — I agree" onclick="event.stopPropagation();toggleAgree()"/>
+          <label class="agree-label" id="agree-label" for="agree-check">
+            <input type="checkbox" name="copyright_agreed" id="agree-check" value="Yes — I agree" onchange="updateAgreeStyle()"/>
             <span class="agree-text">I have read and understood the Copyright Transfer Agreement above and agree to all its terms.</span>
           </label>
           <div class="error">You must accept the copyright agreement to proceed</div>
@@ -269,10 +269,9 @@ function updateWordCount(el) {
 }
 
 // Agree checkbox
-function toggleAgree() {
-  const cb = document.getElementById("agree-check");
+function updateAgreeStyle() {
+  const cb    = document.getElementById("agree-check");
   const label = document.getElementById("agree-label");
-  cb.checked = !cb.checked;
   label.classList.toggle("checked", cb.checked);
 }
 
