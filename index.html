@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Author Submission — Frontiers of Generative AI</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Georgia,serif;background:#f0f4f8;min-height:100vh;color:#1e293b}
+  :root{--db:#1B3A6B;--mb:#2E5FA3;--lb:#D6E4F7;--ac:#C0392B}
+
+  /* HEADER */
+  .header{background:var(--db);padding:18px 24px;display:flex;justify-content:space-between;align-items:center}
+  .header-title{color:white;font-size:19px;font-weight:700}
+  .header-sub{color:var(--lb);font-size:12px;margin-top:3px}
+  .banner{background:linear-gradient(90deg,var(--mb),#1e4d8c);padding:12px 24px}
+  .banner-title{color:white;font-style:italic;font-size:14px}
+  .banner-sub{color:var(--lb);font-size:11px;margin-top:2px}
+
+  /* MAIN */
+  .main{max-width:700px;margin:28px auto;padding:0 16px 60px}
+  .card{background:white;border-radius:16px;padding:28px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .card-intro{border-left:5px solid var(--ac)}
+  .section-title{font-size:16px;font-weight:800;color:var(--db);padding-bottom:12px;border-bottom:2px solid var(--lb);margin-bottom:20px}
+  label{display:block;font-size:13px;font-weight:700;color:var(--db);margin-bottom:5px;letter-spacing:.02em}
+  .req{color:var(--ac)}
+  input,select,textarea{width:100%;padding:10px 14px;border-radius:8px;border:2px solid #CBD5E1;font-size:14px;font-family:Georgia,serif;color:#1e293b;background:white;transition:border-color .2s;outline:none}
+  input:focus,select:focus,textarea:focus{border-color:var(--mb)}
+  .error{color:var(--ac);font-size:12px;margin-top:4px;display:none}
+  .has-error input,.has-error select,.has-error textarea{border-color:var(--ac)}
+  .has-error .error{display:block}
+  .field{margin-bottom:16px}
+  .grid-2{display:grid;grid-template-columns:110px 1fr;gap:12px;margin-bottom:16px}
+
+  /* BIO */
+  textarea{resize:vertical;line-height:1.8}
+  .word-count{font-size:12px;color:#94a3b8;text-align:right;margin-top:4px}
+
+  /* PHOTO */
+  .photo-wrap{display:flex;gap:20px;align-items:center}
+  .photo-preview{width:90px;height:90px;border-radius:12px;object-fit:cover;border:3px solid var(--mb);display:none}
+  .photo-placeholder{width:90px;height:90px;border-radius:12px;background:#f0f4f8;border:2px dashed #CBD5E1;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+  .photo-hint{font-size:12px;color:#94a3b8;margin-top:8px}
+
+  /* COPYRIGHT */
+  .copy-box{background:#f8fafc;border-radius:10px;padding:18px;margin-bottom:20px;font-size:13px;color:#334155;line-height:1.9;border:1px solid #e2e8f0;max-height:220px;overflow-y:auto;white-space:pre-line}
+  .agree-label{display:flex;gap:12px;align-items:flex-start;cursor:pointer;padding:16px;border-radius:10px;border:2px solid #CBD5E1;background:#fafafa;margin-bottom:16px;transition:all .2s}
+  .agree-label.checked{border-color:#a5d6a7;background:#e8f5e9}
+  .agree-label input[type=checkbox]{width:18px;height:18px;margin-top:2px;flex-shrink:0;cursor:pointer;accent-color:var(--db)}
+  .agree-text{font-size:14px;font-weight:600;color:#334155;line-height:1.6}
+  .sig-input{font-style:italic;font-size:16px;letter-spacing:.04em;color:var(--db)}
+  .date-hint{font-size:12px;color:#94a3b8;margin-top:6px}
+
+  /* SUBMIT */
+  .btn-submit{width:100%;padding:16px;border-radius:12px;font-size:17px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--db),var(--mb));color:white;border:none;box-shadow:0 4px 20px rgba(27,58,107,.4);letter-spacing:.03em;margin-bottom:10px;transition:opacity .2s}
+  .btn-submit:hover{opacity:.9}
+  .btn-submit:disabled{background:#94a3b8;box-shadow:none;cursor:not-allowed}
+  .form-note{text-align:center;font-size:12px;color:#94a3b8;margin-top:10px}
+
+  /* INFO BOX */
+  .info{background:#f0f9ff;border-radius:10px;padding:14px;font-size:13px;color:var(--db);border-left:3px solid var(--mb);margin-top:12px}
+
+  /* SUCCESS */
+  #success-screen{display:none;min-height:100vh;background:linear-gradient(135deg,var(--db),var(--mb));align-items:center;justify-content:center;text-align:center;padding:24px}
+  .success-card{background:white;border-radius:20px;padding:48px;max-width:500px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .success-icon{font-size:56px;margin-bottom:16px}
+  .success-title{font-size:24px;font-weight:700;color:var(--db);margin-bottom:10px}
+  .success-sub{font-size:14px;color:#64748b;line-height:1.8;margin-bottom:20px}
+  .success-note{background:#f0f9ff;border-radius:10px;padding:14px;font-size:13px;color:#475569;margin-bottom:24px}
+  .btn-another{background:var(--db);color:white;border:none;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer}
+
+  @media(max-width:600px){
+    .grid-2{grid-template-columns:1fr}
+    .photo-wrap{flex-direction:column;align-items:flex-start}
+  }
+</style>
+</head>
+<body>
+
+<!-- SUCCESS SCREEN -->
+<div id="success-screen">
+  <div class="success-card">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Submitted Successfully!</div>
+    <div class="success-sub">
+      Thank you, <strong id="s-name"></strong>.<br/>
+      Your bio and copyright agreement for <strong id="s-chapter"></strong> have been received by WhiteField Academic Press.
+    </div>
+    <div class="success-note">
+      You will be contacted at <strong id="s-email"></strong> if any additional information is required.
+    </div>
+    <button class="btn-another" onclick="location.reload()">Submit Another Response</button>
+  </div>
+</div>
+
+<!-- FORM SCREEN -->
+<div id="form-screen">
+  <div class="header">
+    <div>
+      <div class="header-title">WhiteField Academic Press</div>
+      <div class="header-sub">Author Bio &amp; Copyright Submission Form</div>
+    </div>
+  </div>
+  <div class="banner">
+    <div class="banner-title">Frontiers of Generative AI: Technology, Innovation, and Applications</div>
+    <div class="banner-sub">ISBN: 978-81-685200-8-0 &nbsp;•&nbsp; First Edition 2026 &nbsp;•&nbsp; WhiteField Academic Press</div>
+  </div>
+
+  <div class="main">
+    <!-- INTRO -->
+    <div class="card card-intro">
+      <div style="font-weight:700;color:var(--db);font-size:16px;margin-bottom:8px">Dear Contributing Author</div>
+      <div style="font-size:14px;color:#475569;line-height:1.8">
+        Please complete this short form to submit your <strong>Author Bio</strong> and provide your <strong>Copyright Agreement</strong> acceptance. Write your bio in <strong>third person</strong> (e.g., "Prof. XYZ is..." not "I am..."). This takes about 5 minutes.
+      </div>
+    </div>
+
+    <form id="main-form" onsubmit="handleSubmit(event)">
+      <!-- HIDDEN for Formspree -->
+      <!-- REPLACE "YOUR_FORMSPREE_ID" below with your actual Formspree endpoint -->
+      <!-- Get it free at https://formspree.io -->
+
+      <!-- CHAPTER -->
+      <div class="card">
+        <div class="section-title">📖 &nbsp;Chapter Details</div>
+        <div class="field" id="field-chapter">
+          <label>Your Chapter <span class="req">*</span></label>
+          <select name="chapter" id="chapter-sel" onchange="onChapterChange()">
+            <option value="">— Select your chapter —</option>
+            <option value="Ch 1: Introduction to Generative AI and Deep Learning">Chapter 1 — Introduction to Generative AI and Deep Learning (Prof. Mukti Pathak)</option>
+            <option value="Ch 2: The Evolution of AI: From Traditional ML to LLMs">Chapter 2 — The Evolution of AI: From Traditional ML to LLMs (Prof. Sapan Kumar Jain)</option>
+            <option value="Ch 3: Emerging Trends and Future Scope of AI">Chapter 3 — Emerging Trends and Future Scope of AI (Prof. Amit Sahu)</option>
+            <option value="Ch 4: Prompt Engineering and Fine-Tuning">Chapter 4 — Prompt Engineering and Fine-Tuning (Prof. Ankita Chaturvedi)</option>
+            <option value="Ch 5: Transforming Healthcare: AI in Disease Detection">Chapter 5 — Transforming Healthcare (Prof. Saurabh Kapoor)</option>
+            <option value="Ch 6: AI in Education: Personalized Learning">Chapter 6 — AI in Education (Prof. Jyoti Soni)</option>
+            <option value="Ch 7: AI in Business and Finance">Chapter 7 — AI in Business and Finance (Prof. Romit Bhalla)</option>
+            <option value="Ch 8: Smart Agriculture: Role of AI">Chapter 8 — Smart Agriculture (Prof. Ratnesh Jain)</option>
+            <option value="Ch 9: Ethical Challenges in AI">Chapter 9 — Ethical Challenges in AI (Prof. L N Pandey)</option>
+            <option value="Ch 10: Cyber Security and AI">Chapter 10 — Cyber Security and AI (Prof. Satendra Sonare)</option>
+            <option value="Ch 11: Generative AI and Deepfakes">Chapter 11 — Generative AI and Deepfakes (Dr. Kailash Rai)</option>
+            <option value="Ch 12: Legal and Social Implications of Generative AI">Chapter 12 — Legal and Social Implications (Prof. Pallavi Upadhyay)</option>
+            <option value="Ch 13: Generative AI in Computer Vision">Chapter 13 — Generative AI in Computer Vision (Prof. Somil Vasal)</option>
+            <option value="Ch 14: Advanced NLP: Generative Models and Chatbots">Chapter 14 — Advanced NLP (Prof. Pranija Kasture)</option>
+            <option value="Ch 15: AIoT: Integrating Generative AI with IoT">Chapter 15 — AIoT (Prof. Kailash Kumar Armo)</option>
+            <option value="Ch 16: Generative AI for Language Intelligence">Chapter 16 — Generative AI for Language Intelligence (Prof. Prakhar Gautam)</option>
+          </select>
+          <div class="error">Please select your chapter</div>
+        </div>
+        <div class="info" id="chapter-info" style="display:none"></div>
+      </div>
+
+      <!-- PERSONAL DETAILS -->
+      <div class="card">
+        <div class="section-title">👤 &nbsp;Personal Details</div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Title</label>
+            <select name="title" id="title-sel">
+              <option>Prof.</option><option>Dr.</option><option>Mr.</option><option>Ms.</option><option>Mrs.</option>
+            </select>
+          </div>
+          <div class="field" id="field-name">
+            <label>Full Name <span class="req">*</span></label>
+            <input type="text" name="fullname" placeholder="e.g., Prakhar Gautam"/>
+            <div class="error">Full name is required</div>
+          </div>
+        </div>
+        <div class="field" id="field-designation">
+          <label>Designation <span class="req">*</span></label>
+          <input type="text" name="designation" placeholder="e.g., Assistant Professor"/>
+          <div class="error">Designation is required</div>
+        </div>
+        <div style="background:#e8f5e9;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#2e7d32;border-left:3px solid #4caf50;font-weight:600">
+          📗 The Department and Institution below form your <strong>official affiliation</strong> and will be printed exactly as entered under your name in the published book. Please ensure accuracy.
+        </div>
+        <div class="field" id="field-department">
+          <label>Department <span class="req">*</span> <span style="color:#2e7d32;font-weight:400;font-size:12px">(Will appear in book)</span></label>
+          <input type="text" name="department" placeholder="e.g., Department of Computer Science & Engineering (AI & ML)"/>
+          <div class="error">Department is required</div>
+        </div>
+        <div class="field" id="field-institution">
+          <label>Institution <span class="req">*</span> <span style="color:#2e7d32;font-weight:400;font-size:12px">(Will appear in book)</span></label>
+          <input type="text" name="institution" placeholder="e.g., Gyan Ganga Institute of Technology & Sciences, Jabalpur"/>
+          <div class="error">Institution is required</div>
+        </div>
+        <div class="field" id="field-email">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" name="email" placeholder="e.g., yourname@institution.ac.in"/>
+          <div class="error">Valid email address is required</div>
+        </div>
+      </div>
+
+      <!-- BIO -->
+      <div class="card">
+        <div class="section-title">✍️ &nbsp;Author Bio</div>
+        <div style="background:#f0f9ff;border-radius:10px;padding:14px;margin-bottom:16px;font-size:13px;color:#334155;line-height:1.75;border-left:3px solid var(--mb)">
+          <strong>Instructions:</strong> Write 8–12 lines in <strong>third person</strong>. Include your designation, institution, qualifications, research interests, years of teaching experience, and a brief mention of your chapter topic.<br/>
+          <span style="color:var(--mb);font-style:italic;margin-top:6px;display:block">Example: "Prof. [Name] is an Assistant Professor in the Department of CSE (AI &amp; ML) at [Institution]. He/She holds an M.Tech in [Specialisation] from [University]. His/Her research interests include [areas]..."</span>
+        </div>
+        <div class="field" id="field-bio">
+          <label>Your Bio (in third person) <span class="req">*</span></label>
+          <textarea name="bio" rows="10" placeholder="Prof. [Your Name] is..." oninput="updateWordCount(this)"></textarea>
+          <div class="error">Please write at least 25 words</div>
+          <div class="word-count"><span id="word-count">0</span> words</div>
+        </div>
+      </div>
+
+      <!-- PHOTO -->
+      <div class="card">
+        <div class="section-title">📷 &nbsp;Photograph <span style="color:var(--ac);font-size:14px">*</span></div>
+        <div style="background:#fff8e1;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#7b5800;border-left:3px solid #f9a825;font-weight:600">
+          📘 Your photograph will be printed alongside your bio in the <em>About the Authors</em> section of the published book. Please upload a clear, professional photograph.
+        </div>
+        <div class="photo-wrap">
+          <div style="flex-shrink:0">
+            <div class="photo-placeholder" id="photo-placeholder">👤</div>
+            <img class="photo-preview" id="photo-preview" alt="Preview"/>
+          </div>
+          <div>
+            <label>Upload Photo <span class="req">*</span></label>
+            <input type="file" accept="image/*" id="photo-input" onchange="previewPhoto(this)" style="padding:6px 0;border:none;font-size:13px"/>
+            <div class="error" id="photo-error" style="display:none">Photo is required for book publication</div>
+            <div class="photo-hint">JPEG or PNG &nbsp;•&nbsp; Plain / white background preferred &nbsp;•&nbsp; Passport or professional size &nbsp;•&nbsp; Minimum 300 DPI</div>
+          </div>
+        </div>
+        <input type="hidden" name="photo_submitted" id="photo-submitted" value="No"/>
+      </div>
+
+      <!-- COPYRIGHT -->
+      <div class="card">
+        <div class="section-title">⚖️ &nbsp;Copyright Transfer Agreement</div>
+        <div class="copy-box">1. TRANSFER OF COPYRIGHT — I assign exclusive worldwide copyright of my chapter to WhiteField Academic Press for the full term of copyright in all media and languages.
+
+2. ORIGINALITY — My chapter is original work, not previously published elsewhere in substantially the same form, and does not infringe any third-party rights.
+
+3. AI CONTENT — Intellectual conception, scholarly direction, and responsibility remain with me as Author. Any AI-assisted content has been reviewed and verified by me personally.
+
+4. RETAINED RIGHTS — I retain the right to use the chapter for personal academic purposes (teaching, presentations, thesis) with attribution to WhiteField Academic Press.
+
+5. INDEMNIFICATION — I agree to indemnify WhiteField Academic Press against claims arising from breach of the above warranties.
+
+Governing Law: Courts of Noida, Uttar Pradesh, India.</div>
+
+        <div class="field" id="field-agreed">
+          <label class="agree-label" id="agree-label" onclick="toggleAgree()">
+            <input type="checkbox" name="copyright_agreed" id="agree-check" value="Yes — I agree" onclick="event.stopPropagation();toggleAgree()"/>
+            <span class="agree-text">I have read and understood the Copyright Transfer Agreement above and agree to all its terms.</span>
+          </label>
+          <div class="error">You must accept the copyright agreement to proceed</div>
+        </div>
+
+        <div class="field" id="field-signature">
+          <label>Digital Signature — Type your full name <span class="req">*</span></label>
+          <input type="text" name="digital_signature" class="sig-input" placeholder="Type your full name as your digital signature"/>
+          <div class="error">Please type your full name as digital signature</div>
+          <div class="date-hint" id="today-date"></div>
+        </div>
+      </div>
+
+      <!-- HIDDEN FIELDS -->
+      <input type="hidden" name="submission_date" id="submission-date"/>
+      <input type="text" name="_gotcha" style="display:none"/>
+      <input type="hidden" name="_subject" value="Author Submission — Frontiers of Generative AI"/>
+      <input type="hidden" name="_next" value=""/>
+
+      <button type="submit" class="btn-submit" id="submit-btn">
+        Submit Bio &amp; Copyright Agreement →
+      </button>
+      <div class="form-note">For queries: whitefieldresearch@gmail.com &nbsp;|&nbsp; WhiteField Academic Press</div>
+    </form>
+  </div>
+</div>
+
+<script>
+// Set today's date
+const today = new Date().toLocaleDateString("en-IN",{day:"numeric",month:"long",year:"numeric"});
+document.getElementById("today-date").textContent = "Date: " + today;
+document.getElementById("submission-date").value = today;
+
+// Chapter info display
+function onChapterChange() {
+  const sel = document.getElementById("chapter-sel");
+  const info = document.getElementById("chapter-info");
+  if (sel.value) {
+    info.textContent = "✓ Selected: " + sel.value;
+    info.style.display = "block";
+  } else {
+    info.style.display = "none";
+  }
+}
+
+// Word count
+function updateWordCount(el) {
+  const words = el.value.trim().split(/\s+/).filter(Boolean).length;
+  document.getElementById("word-count").textContent = words;
+}
+
+// Photo preview
+function previewPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById("photo-preview");
+    const placeholder = document.getElementById("photo-placeholder");
+    preview.src = e.target.result;
+    preview.style.display = "block";
+    placeholder.style.display = "none";
+    document.getElementById("photo-submitted").value = "Yes — " + file.name;
+  };
+  reader.readAsDataURL(file);
+}
+
+// Agree checkbox
+function toggleAgree() {
+  const cb = document.getElementById("agree-check");
+  const label = document.getElementById("agree-label");
+  cb.checked = !cb.checked;
+  label.classList.toggle("checked", cb.checked);
+}
+
+// Validate
+function validate() {
+  let ok = true;
+  const checks = [
+    ["field-chapter",     () => document.getElementById("chapter-sel").value !== ""],
+    ["field-name",        () => document.querySelector("[name=fullname]").value.trim() !== ""],
+    ["field-designation", () => document.querySelector("[name=designation]").value.trim() !== ""],
+    ["field-department",  () => document.querySelector("[name=department]").value.trim() !== ""],
+    ["field-institution", () => document.querySelector("[name=institution]").value.trim() !== ""],
+    ["field-email",       () => {const e=document.querySelector("[name=email]").value.trim(); return e && e.includes("@");}],
+    ["field-bio",         () => document.querySelector("[name=bio]").value.trim().split(/\s+/).filter(Boolean).length >= 25],
+    ["field-agreed",      () => document.getElementById("agree-check").checked],
+    ["field-signature",   () => document.querySelector("[name=digital_signature]").value.trim() !== ""],
+  ];
+  checks.forEach(([id, fn]) => {
+    const el = document.getElementById(id);
+    if (!fn()) { el.classList.add("has-error"); ok = false; }
+    else el.classList.remove("has-error");
+  });
+  // Photo — mandatory for book publication
+  const photoInput = document.getElementById("photo-input");
+  const photoErr   = document.getElementById("photo-error");
+  if (!photoInput.files || photoInput.files.length === 0) {
+    photoErr.style.display = "block";
+    photoErr.scrollIntoView({behavior:"smooth", block:"center"});
+    ok = false;
+  } else {
+    photoErr.style.display = "none";
+  }
+  return ok;
+}
+
+// Submit handler
+async function handleSubmit(e) {
+  e.preventDefault();
+  if (!validate()) {
+    document.querySelector(".has-error")?.scrollIntoView({behavior:"smooth", block:"center"});
+    return;
+  }
+
+  // ── DUPLICATE CHECK ──────────────────────────────────────────
+  const email    = document.querySelector("[name=email]").value.trim().toLowerCase();
+  const chapter  = document.getElementById("chapter-sel").value;
+  const subKey   = "submitted_" + email.replace(/[^a-z0-9]/g,"_") + "_" + chapter.substring(0,4).replace(/\s/g,"");
+  const already  = localStorage.getItem(subKey);
+
+  if (already) {
+    const when = new Date(parseInt(already)).toLocaleDateString("en-IN",{day:"numeric",month:"long",year:"numeric",hour:"2-digit",minute:"2-digit"});
+    const confirmed = confirm(
+      "⚠️ Duplicate Submission Detected\n\n" +
+      "Our records show that " + email + " already submitted for " + chapter + " on " + when + ".\n\n" +
+      "• If you need to CORRECT something — click OK to resubmit.\n" +
+      "• If this was a mistake — click Cancel to go back."
+    );
+    if (!confirmed) return;
+  }
+  // ────────────────────────────────────────────────────────────
+
+  const btn = document.getElementById("submit-btn");
+  btn.disabled = true;
+  btn.textContent = "Submitting...";
+
+  // ── FORMSPREE SUBMISSION ──────────────────────────────────────
+  // STEP 1: Go to https://formspree.io/register (free)
+  // STEP 2: Create a new form → copy your endpoint URL
+  // STEP 3: Replace the URL below with your endpoint
+  // Example: https://formspree.io/f/xabc1234
+  const FORMSPREE_URL = "https://formspree.io/f/xrejrpqj";
+  // ─────────────────────────────────────────────────────────────
+
+  const formData = new FormData(e.target);
+  formData.set("chapter", document.getElementById("chapter-sel").value);
+  formData.set("title", document.getElementById("title-sel").value);
+
+  try {
+    const res = await fetch(FORMSPREE_URL, {
+      method: "POST",
+      body: formData,
+      headers: { "Accept": "application/json" }
+    });
+    if (res.ok) {
+      // ── Save submission record to localStorage
+      localStorage.setItem(subKey, Date.now().toString());
+
+      // Show success
+      document.getElementById("s-name").textContent = document.getElementById("title-sel").value + " " + document.querySelector("[name=fullname]").value;
+      document.getElementById("s-chapter").textContent = document.getElementById("chapter-sel").value;
+      document.getElementById("s-email").textContent = document.querySelector("[name=email]").value;
+      document.getElementById("form-screen").style.display = "none";
+      const ss = document.getElementById("success-screen");
+      ss.style.display = "flex";
+    } else {
+      throw new Error("Server error");
+    }
+  } catch(err) {
+    btn.disabled = false;
+    btn.textContent = "Submit Bio & Copyright Agreement →";
+    alert("Submission failed. Please check your internet connection and try again.\n\nAlternatively, email your details to: whitefieldresearch@gmail.com");
+  }
+}
+</script>
+</body>
+</html>
